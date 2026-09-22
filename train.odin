@@ -13,12 +13,12 @@ import "core:bufio"
 @private
 load_mnist_data :: proc(path: string, size: int) -> (ret: [dynamic]MnistRecord, ok: bool) {
     f, ferr := os.open(path)
-    if ferr != 0 do return
+    if ferr != nil do return
     defer os.close(f)
 
     r: bufio.Reader
     buffer: [1024]byte
-    bufio.reader_init_with_buf(&r, os.stream_from_handle(f), buffer[:])
+    bufio.reader_init_with_buf(&r, os.to_reader(f), buffer[:])
     defer bufio.reader_destroy(&r)
 
     // Ignore csv file header

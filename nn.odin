@@ -267,7 +267,7 @@ net_save :: proc(net: ^Net) -> bool {
     if data, err := json.marshal(net^, allocator = context.temp_allocator); err == nil {
         // Create the directory if it doesn't exist
         err := os.make_directory(NETWORK_SAVE_DIRECTORY)
-        if os.write_entire_file(NETWORK_SAVE_FILE_PATH, data) {
+        if os.write_entire_file(NETWORK_SAVE_FILE_PATH, data) == nil {
             return true
         }
     }
@@ -278,7 +278,7 @@ net_save :: proc(net: ^Net) -> bool {
 // Do not init mem when loading a network
 // It leads to memory leaks
 net_load :: proc(net: ^Net) -> (ok: bool) {
-    if json_data, ok := os.read_entire_file(NETWORK_LOAD_FILE_PATH, context.temp_allocator); ok {
+    if json_data, err := os.read_entire_file(NETWORK_LOAD_FILE_PATH, context.temp_allocator); err == nil {
         if json.unmarshal(json_data, net) == nil {
             return true
         } else {
